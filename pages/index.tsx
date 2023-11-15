@@ -1,17 +1,22 @@
-import { NextPage} from 'next'
-import Image from 'next/image';
-// import { type } from 'os';
-import { useEffect, useState } from 'react';
+import { GetServerSideProps, NextPage} from 'next'
+import { useState } from 'react';
 
-const IndexPage: NextPage = () => {
-    const [imageUrl, setImageUrl] = useState("");
-    const [loading, setLoading] = useState(true);
-    useEffect(() => {
-        fetchImage().then((newImage) => {
-            setImageUrl(newImage.url)
-            setLoading(false)
-        });
-    }, []);
+// Type of props passed from getServerSideProps
+
+type Props = {
+    initialImageUrl:  string
+}
+
+
+const IndexPage: NextPage<Props> = ({initialImageUrl}) => {
+    const [imageUrl, setImageUrl] = useState(initialImageUrl);
+    const [loading, setLoading] = useState(false);
+    // useEffect(() => {
+    //     fetchImage().then((newImage) => {
+    //         setImageUrl(newImage.url)
+    //         setLoading(false)
+    //     });
+    // }, []);
     const handleClick =  async () =>{
         setLoading(true);
         const newImage = await fetchImage();
@@ -28,6 +33,17 @@ const IndexPage: NextPage = () => {
 
 export default IndexPage;
 
+// Server side rendering
+
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+    const image = await fetchImage();
+    return {
+        props: {
+            initialImageUrl: image.url,
+        },
+    };
+};
+
 type Image = {
     url: string;
 }
@@ -35,10 +51,6 @@ type Image = {
 const fetchImage = async (): Promise<Image> => {
     const res = await fetch("https://api.thecatapi.com/v1/images/search");
     const images = await res.json();
-    console.log(images);
+    // console.log(images);
     return images[0];
 };
-
-// call the fetchImage function
-
-fetchImage();

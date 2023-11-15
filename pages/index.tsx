@@ -1,6 +1,7 @@
 import { GetServerSideProps, NextPage} from 'next'
 import { useState } from 'react';
 
+import styles from "./index.module.css"
 // Type of props passed from getServerSideProps
 
 type Props = {
@@ -24,9 +25,13 @@ const IndexPage: NextPage<Props> = ({initialImageUrl}) => {
         setLoading(false)
     }
     return (
-        <div>
-            <button onClick={handleClick}>Click Me To Get New Cat</button>
-            <div>{loading || <img src={imageUrl} style={{ width: '60%', height: '45%' }} />}</div>
+        <div className={styles.page}>
+            <button onClick={handleClick} className={styles.button}>
+                Click Me To Get New Cat
+            </button>
+            <div className={styles.frame}>
+                {loading || <img src={imageUrl} className={styles.img} />}
+            </div>
         </div>
     )
 };
